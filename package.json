@@ -1,0 +1,18 @@
+{
+  "name": "xmlparser",
+  "version": "1.0.0",
+  "description": "parses image and meta data from moodle xml backup files",
+  "dependencies": {
+    "fs": "*",
+    "cheerio": "*",
+    "xml2js": "*",
+    "cli-progress": "*"
+  },
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node script.js"
+  },
+  "author": "Martin Hanusch",
+  "license": "ISC"
+}
