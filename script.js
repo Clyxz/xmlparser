@@ -82,6 +82,7 @@ processXMLFile = (xmlFile) => {
                 return console.log("[\x1b[31m\x1b[1mERR\x1b[37m\x1b[0m] " + xmlFile + " - " + error);
             }
             // Step 2
+            console.log("      - Start extracting images of '" + xmlFile + "'");
             parser.parseString(xmlcontent, (error, result) => {
                 if (error) {
                     return console.log("[\x1b[31m\x1b[1mERR\x1b[37m\x1b[0m] " + xmlFile + " - " + error);
@@ -98,13 +99,15 @@ processXMLFile = (xmlFile) => {
                 }
                 // Step 4
                 saveImages(xmlFile);
-                console.log("[\x1b[32m\x1b[1mOK \x1b[37m\x1b[0m] - Extracted images of " + output.length + " questions into\n'_output/" + foldername + "/" + xmlFile + "'");
+                console.log("[\x1b[32m\x1b[1mOK \x1b[37m\x1b[0m] - Finished extraxting images out of " + output.length + " questions in '" + xmlFile + "'");
             });
         });
     } catch (error) {
         return console.log("[\x1b[31m\x1b[1mERR\x1b[37m\x1b[0m] " + error);  
     }
 }
+
+
 
 createQuestionIndex = (index) => {
     output[index] = {name: null, content: [], error: false};
@@ -190,8 +193,8 @@ extractBase64 = (string, index) => {
 
 // Step 1: Creates a folder for the currently processed xml file.
 // Step 2.1: Loops over the output array (each index = question)
-// Step 2.2: Loops over output[index].content (each index = image)
-// Step 2.3: Saves each image to the filedisk
+// Step 2.2: Loops over output[index].content (each index = base64 string)
+// Step 2.3: Saves each base64 string as .png to the filedisk
 
 saveImages = (xmlFile) => {
     try {
@@ -205,18 +208,9 @@ saveImages = (xmlFile) => {
         for (var i in output) {
             if(!output[i].error && output[i].name != null && output[i].content.length > 0) {
                 // Step 2.2
-                var name = output[i].name.replace(/\//g, "-");
-                name = name.replace(/[^a-zA-Z0-9() ]/g, "");
-                name = name.replace(/\s/g,"_");
-
                 for (var j in output[i].content) {
                     // Step 2.3
-                    fs.writeFile("_output/" + foldername + "/" + xmlFile + "/" + name + "_" + j + ".png", 
-                    output[i].content[j], 'base64', (error) => {
-                        if (error) {
-                            return console.log("[\x1b[31m\x1b[1mERR\x1b[37m\x1b[0m] " + xmlFile + " - " + error);
-                        }
-                    });
+                    writeImage(output, xmlFile, i, j);
                 }
             }
         }
@@ -224,6 +218,21 @@ saveImages = (xmlFile) => {
         return console.log("[\x1b[31m\x1b[1mERR\x1b[37m\x1b[0m] " + error);     
     }
 }
+
+writeImage = async(output, xmlFile, i, j) => {
+    var filename = output[i].name.replace(/\//g, "-");
+    filename = filename.replace(/[^a-zA-Z0-9() ]/g, "");
+    filename = filename.replace(/\s/g,"_");
+
+    fs.writeFile("_output/" + foldername + "/" + xmlFile + "/" + filename + "_" + j + ".png", 
+    output[i].content[j], 'base64', (error) => {
+        if (error) {
+            return console.log("[\x1b[31m\x1b[1mERR\x1b[37m\x1b[0m] " + xmlFile + " - " + error);
+        }
+    });
+}
+
+
 
 getExtension = (filename) => {
     return filename.split('.').pop();
