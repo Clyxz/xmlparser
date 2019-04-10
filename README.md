@@ -9,6 +9,7 @@ The backup files must be in xml-format.
 1. Install [Node.js](https://nodejs.org/en/)
 1. Switch into the xmlparser folder using the terminal.
 1. Run `npm install` to setup the script's dependencies.
+1. Create two empty directories "_input" and "_output" within xmlparser folder.
 1. Make sure the executing user has sufficient permissions to access the _output folder in write-mode.
 
 
